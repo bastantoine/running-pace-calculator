@@ -18,7 +18,6 @@ function compute(event: Event) {
   if (duration_hour !== undefined || duration_minutes !== undefined || duration_seconds !== undefined) {
     seconds_duration = ((duration_hour ?? 0) * 3600) + ((duration_minutes ?? 0) * 60) + (duration_seconds ?? 0)
   }
-  console.log(seconds_duration)
   let pace_seconds_meter = seconds_duration / distance_meter
   let pace_seconds_km = (pace_seconds_meter * 1000)
 
