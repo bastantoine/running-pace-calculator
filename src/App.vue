@@ -54,19 +54,19 @@ function setDistance(distance: number) {
         <div class="field">
           <label class="label">Time</label>
           <div class="level">
-            <input v-model="form_duration_hour" class="input" type="text" placeholder="Hour">
+            <input v-model="form_duration_hour" class="input" type="number" placeholder="Hour">
             <label class="label">:</label>
-            <input v-model="form_duration_minutes" class="input" type="text" placeholder="Minutes">
+            <input v-model="form_duration_minutes" class="input" type="number" placeholder="Minutes">
             <label class="label">:</label>
-            <input v-model="form_duration_seconds" class="input" type="text" placeholder="Seconds">
+            <input v-model="form_duration_seconds" class="input" type="number" placeholder="Seconds">
           </div>
         </div>
         <div class="field">
           <label class="label">Pace (min/km)</label>
           <div class="level">
-            <input v-model="form_pace_minutes" class="input" type="text" placeholder="Minutes">
+            <input v-model="form_pace_minutes" class="input" type="number" placeholder="Minutes">
             <label class="label">:</label>
-            <input v-model="form_pace_seconds" class="input" type="text" placeholder="Seconds">
+            <input v-model="form_pace_seconds" class="input" type="number" placeholder="Seconds">
           </div>
         </div>
         <div class="field buttons has-addons">
