@@ -31,6 +31,15 @@ function setDistance(distance: number) {
   form_distance.value = distance
 }
 
+function reset() {
+  form_distance.value = undefined
+  form_duration_hour.value = undefined
+  form_duration_minutes.value = undefined
+  form_duration_seconds.value = undefined
+  form_pace_minutes.value = undefined
+  form_pace_seconds.value = undefined
+}
+
 </script>
 
 <template>
@@ -42,7 +51,7 @@ function setDistance(distance: number) {
       <div class="block">
         <div class="field">
           <label class="label">Distance (in m)</label>
-          <input v-model="form_distance" class="input" type="text" placeholder="Distance">
+          <input v-model="form_distance" class="input" type="number" placeholder="Distance">
         </div>
         <div class="field buttons has-addons">
           <button class="button" @click="setDistance(10000)">10km</button>
@@ -71,7 +80,7 @@ function setDistance(distance: number) {
         </div>
         <div class="field buttons has-addons">
           <button class="button is-success" @click="compute">Compute</button>
-          <button class="button is-danger" @click="compute">Reset</button>
+          <button class="button is-danger" @click="reset">Reset</button>
         </div>
       </div>
     </section>
