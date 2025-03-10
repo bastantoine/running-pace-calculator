@@ -11,20 +11,35 @@ const form_pace_seconds = ref()
 function compute(event: Event) {
   const distance_meter = form_distance.value
 
-  const duration_hour = form_duration_hour.value
-  const duration_minutes = form_duration_minutes.value
-  const duration_seconds = form_duration_seconds.value
-  let seconds_duration = 0
-  if (duration_hour !== undefined || duration_minutes !== undefined || duration_seconds !== undefined) {
-    seconds_duration = ((duration_hour ?? 0) * 3600) + ((duration_minutes ?? 0) * 60) + (duration_seconds ?? 0)
-  }
-  let pace_seconds_meter = seconds_duration / distance_meter
-  let pace_seconds_km = (pace_seconds_meter * 1000)
+  const duration_hour = form_duration_hour.value ?? 0
+  const duration_minutes = form_duration_minutes.value ?? 0
+  const duration_seconds = form_duration_seconds.value ?? 0
 
-  const minutes = Math.floor(pace_seconds_km / 60);
-  const seconds = Math.floor(pace_seconds_km - minutes * 60);
-  form_pace_minutes.value = minutes
-  form_pace_seconds.value = seconds
+  if (duration_hour === 0 && duration_minutes === 0 && duration_seconds === 0) {
+    // Compute time from distance and pace
+    const pace_minutes = form_pace_minutes.value ?? 0
+    const pace_seconds = form_pace_seconds.value ?? 0
+    let pace_seconds_km = (pace_minutes * 60) + pace_seconds
+    let pace_seconds_meter = pace_seconds_km / 1000
+    let seconds_duration = pace_seconds_meter * distance_meter
+
+    const hours = Math.floor(seconds_duration / 3600);
+    const minutes = Math.floor((seconds_duration - hours * 3600) / 60);
+    const seconds = Math.floor(seconds_duration - hours * 3600 - minutes * 60);
+    form_duration_hour.value = hours
+    form_duration_minutes.value = minutes
+    form_duration_seconds.value = seconds
+  } else {
+    // Compute pace from distance and time
+    let seconds_duration = (duration_hour * 3600) + (duration_minutes * 60) + duration_seconds
+    let distance_km = distance_meter / 1000
+    let pace_seconds_km = seconds_duration / distance_km
+
+    const minutes = Math.floor(pace_seconds_km / 60);
+    const seconds = Math.floor(pace_seconds_km - minutes * 60);
+    form_pace_minutes.value = minutes
+    form_pace_seconds.value = seconds
+  }
 }
 
 function setDistance(distance: number) {
