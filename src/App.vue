@@ -11,14 +11,14 @@ const form_pace_seconds = ref()
 function compute(event: Event) {
   const distance_meter = form_distance.value
 
-  const duration_hour = form_duration_hour.value ?? 0
-  const duration_minutes = form_duration_minutes.value ?? 0
-  const duration_seconds = form_duration_seconds.value ?? 0
+  const duration_hour = form_duration_hour.value || 0
+  const duration_minutes = form_duration_minutes.value || 0
+  const duration_seconds = form_duration_seconds.value || 0
 
   if (duration_hour === 0 && duration_minutes === 0 && duration_seconds === 0) {
     // Compute time from distance and pace
-    const pace_minutes = form_pace_minutes.value ?? 0
-    const pace_seconds = form_pace_seconds.value ?? 0
+    const pace_minutes = form_pace_minutes.value || 0
+    const pace_seconds = form_pace_seconds.value || 0
     let pace_seconds_km = (pace_minutes * 60) + pace_seconds
     let pace_seconds_meter = pace_seconds_km / 1000
     let seconds_duration = pace_seconds_meter * distance_meter
