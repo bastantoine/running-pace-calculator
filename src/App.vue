@@ -8,6 +8,8 @@ const form_duration_seconds = ref()
 const form_pace_minutes = ref()
 const form_pace_seconds = ref()
 
+const laps = ref<{ distance: number; duration: { hours: number; minutes: number; seconds: number; } }[]>([])
+
 function compute(event: Event) {
   const distance_meter = form_distance.value
 
@@ -15,12 +17,13 @@ function compute(event: Event) {
   const duration_minutes = form_duration_minutes.value || 0
   const duration_seconds = form_duration_seconds.value || 0
 
+  let pace_seconds_meter = 0
   if (duration_hour === 0 && duration_minutes === 0 && duration_seconds === 0) {
     // Compute time from distance and pace
     const pace_minutes = form_pace_minutes.value || 0
     const pace_seconds = form_pace_seconds.value || 0
     let pace_seconds_km = (pace_minutes * 60) + pace_seconds
-    let pace_seconds_meter = pace_seconds_km / 1000
+    pace_seconds_meter = pace_seconds_km / 1000
     let seconds_duration = pace_seconds_meter * distance_meter
 
     const hours = Math.floor(seconds_duration / 3600);
@@ -34,12 +37,49 @@ function compute(event: Event) {
     let seconds_duration = (duration_hour * 3600) + (duration_minutes * 60) + duration_seconds
     let distance_km = distance_meter / 1000
     let pace_seconds_km = seconds_duration / distance_km
+    pace_seconds_meter = pace_seconds_km / 1000
 
     const minutes = Math.floor(pace_seconds_km / 60);
     const seconds = Math.floor(pace_seconds_km - minutes * 60);
     form_pace_minutes.value = minutes
     form_pace_seconds.value = seconds
   }
+
+  let _laps = []
+  const increment = distance_meter <= 15000 ? 1000 : 5000
+  let intermediate = 0
+  for (intermediate = 0; intermediate < distance_meter; intermediate = intermediate + increment) {
+    const total_seconds = intermediate * pace_seconds_meter
+    const hours = Math.floor(total_seconds / 3600);
+    const minutes = Math.floor((total_seconds - hours * 3600) / 60);
+    const seconds = Math.floor(total_seconds - hours * 3600 - minutes * 60);
+    _laps.push({
+      distance: intermediate / 1000,
+      duration: {
+        hours: hours,
+        minutes: minutes,
+        seconds: seconds
+      }
+    })
+  }
+  if (intermediate - increment < distance_meter) {
+    intermediate = distance_meter - increment
+    const total_seconds = distance_meter * pace_seconds_meter
+    const hours = Math.floor(total_seconds / 3600);
+    const minutes = Math.floor((total_seconds - hours * 3600) / 60);
+    const seconds = Math.floor(total_seconds - hours * 3600 - minutes * 60);
+    _laps.push({
+      distance: distance_meter / 1000,
+      duration: {
+        hours: hours,
+        minutes: minutes,
+        seconds: seconds
+      }
+    })
+  }
+
+  laps.value = _laps
+
 }
 
 function setDistance(distance: number) {
@@ -97,6 +137,13 @@ function reset() {
           <button class="button is-success" @click="compute">Compute</button>
           <button class="button is-danger" @click="reset">Reset</button>
         </div>
+      </div>
+      <div class="block">
+        <ul>
+          <li v-for="lap in laps">
+            {{ lap.distance }} km - {{ lap.duration.hours }}:{{ lap.duration.minutes }}:{{ lap.duration.seconds }}
+          </li>
+        </ul>
       </div>
     </section>
   </main>
