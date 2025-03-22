@@ -93,6 +93,7 @@ function reset() {
   form_duration_seconds.value = undefined
   form_pace_minutes.value = undefined
   form_pace_seconds.value = undefined
+  laps.value = []
 }
 
 </script>
