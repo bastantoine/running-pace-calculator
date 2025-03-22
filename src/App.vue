@@ -140,11 +140,12 @@ function reset() {
         </div>
       </div>
       <div class="block">
-        <ul>
-          <li v-for="lap in laps">
-            {{ lap.distance }} km - {{ lap.duration.hours }}:{{ lap.duration.minutes }}:{{ lap.duration.seconds }}
-          </li>
-        </ul>
+        <table>
+          <tr v-for="lap in laps">
+            <td style="text-align: right;" class="pr-2">{{ lap.distance }} km</td>
+            <td class="pl-2">{{ lap.duration.hours }}:{{ lap.duration.minutes }}:{{ lap.duration.seconds }}</td>
+          </tr>
+        </table>
       </div>
     </section>
   </main>
