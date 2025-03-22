@@ -8,7 +8,7 @@ const form_duration_seconds = ref()
 const form_pace_minutes = ref()
 const form_pace_seconds = ref()
 
-const laps = ref<{ distance: number; duration: { hours: number; minutes: number; seconds: number; } }[]>([])
+const laps = ref<{ distance: number; duration: { hours: string; minutes: string; seconds: string; } }[]>([])
 
 function compute(event: Event) {
   const distance_meter = form_distance.value
@@ -56,9 +56,9 @@ function compute(event: Event) {
     _laps.push({
       distance: intermediate / 1000,
       duration: {
-        hours: hours,
-        minutes: minutes,
-        seconds: seconds
+        hours: String(hours).padStart(2, '0'),
+        minutes: String(minutes).padStart(2, '0'),
+        seconds: String(seconds).padStart(2, '0'),
       }
     })
   }
@@ -71,9 +71,9 @@ function compute(event: Event) {
     _laps.push({
       distance: distance_meter / 1000,
       duration: {
-        hours: hours,
-        minutes: minutes,
-        seconds: seconds
+        hours: String(hours).padStart(2, '0'),
+        minutes: String(minutes).padStart(2, '0'),
+        seconds: String(seconds).padStart(2, '0'),
       }
     })
   }
