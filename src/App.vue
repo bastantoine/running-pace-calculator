@@ -104,48 +104,50 @@ function reset() {
       <div class="block">
         <h1 class="title">Running pace calculator</h1>
       </div>
-      <div class="block">
-        <div class="field">
-          <label class="label">Distance (in m)</label>
-          <input v-model="form_distance" class="input" type="number" placeholder="Distance">
-        </div>
-        <div class="field buttons has-addons">
-          <button class="button" @click="setDistance(10000)">10km</button>
-          <button class="button" @click="setDistance(15000)">15km</button>
-          <button class="button" @click="setDistance(20000)">20km</button>
-          <button class="button" @click="setDistance(21097)">Half-marathon</button>
-          <button class="button" @click="setDistance(42195)">Marathon</button>
-        </div>
-        <div class="field">
-          <label class="label">Time</label>
-          <div class="level">
-            <input v-model="form_duration_hour" class="input" type="number" placeholder="Hour">
-            <label class="label">:</label>
-            <input v-model="form_duration_minutes" class="input" type="number" placeholder="Minutes">
-            <label class="label">:</label>
-            <input v-model="form_duration_seconds" class="input" type="number" placeholder="Seconds">
+      <div class="columns block">
+        <div class="column is-9">
+          <div class="field">
+            <label class="label">Distance (in m)</label>
+            <input v-model="form_distance" class="input" type="number" placeholder="Distance">
+          </div>
+          <div class="field buttons has-addons">
+            <button class="button" @click="setDistance(10000)">10km</button>
+            <button class="button" @click="setDistance(15000)">15km</button>
+            <button class="button" @click="setDistance(20000)">20km</button>
+            <button class="button" @click="setDistance(21097)">Half-marathon</button>
+            <button class="button" @click="setDistance(42195)">Marathon</button>
+          </div>
+          <div class="field">
+            <label class="label">Time</label>
+            <div class="level">
+              <input v-model="form_duration_hour" class="input" type="number" placeholder="Hour">
+              <label class="label">:</label>
+              <input v-model="form_duration_minutes" class="input" type="number" placeholder="Minutes">
+              <label class="label">:</label>
+              <input v-model="form_duration_seconds" class="input" type="number" placeholder="Seconds">
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">Pace (min/km)</label>
+            <div class="level">
+              <input v-model="form_pace_minutes" class="input" type="number" placeholder="Minutes">
+              <label class="label">:</label>
+              <input v-model="form_pace_seconds" class="input" type="number" placeholder="Seconds">
+            </div>
+          </div>
+          <div class="field buttons has-addons">
+            <button class="button is-success" @click="compute">Compute</button>
+            <button class="button is-danger" @click="reset">Reset</button>
           </div>
         </div>
-        <div class="field">
-          <label class="label">Pace (min/km)</label>
-          <div class="level">
-            <input v-model="form_pace_minutes" class="input" type="number" placeholder="Minutes">
-            <label class="label">:</label>
-            <input v-model="form_pace_seconds" class="input" type="number" placeholder="Seconds">
-          </div>
+        <div class="column is-offset-1 is-2">
+          <table>
+            <tr v-for="lap in laps">
+              <td style="text-align: right;" class="pr-2">{{ lap.distance }} km</td>
+              <td class="pl-2">{{ lap.duration.hours }}:{{ lap.duration.minutes }}:{{ lap.duration.seconds }}</td>
+            </tr>
+          </table>
         </div>
-        <div class="field buttons has-addons">
-          <button class="button is-success" @click="compute">Compute</button>
-          <button class="button is-danger" @click="reset">Reset</button>
-        </div>
-      </div>
-      <div class="block">
-        <table>
-          <tr v-for="lap in laps">
-            <td style="text-align: right;" class="pr-2">{{ lap.distance }} km</td>
-            <td class="pl-2">{{ lap.duration.hours }}:{{ lap.duration.minutes }}:{{ lap.duration.seconds }}</td>
-          </tr>
-        </table>
       </div>
     </section>
   </main>
