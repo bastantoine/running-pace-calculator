@@ -1,37 +1,47 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
+type Duration = { hours: number; minutes: number; seconds: number }
+type FormattedDuration = { hours: string; minutes: string; seconds: string }
+type Pace = { minutes: number; seconds: number }
+
 const form_distance = ref()
-const form_duration_hour = ref()
-const form_duration_minutes = ref()
-const form_duration_seconds = ref()
-const form_pace_minutes = ref()
-const form_pace_seconds = ref()
+const form_duration = ref<Duration>({ hours: 0, minutes: 0, seconds: 0 })
+const form_pace = ref<Pace>({ minutes: 0, seconds: 0 })
+const laps = ref<{
+  distance: number;
+  duration: FormattedDuration;
+}[]>([])
 
-const laps = ref<{ distance: number; duration: { hours: string; minutes: string; seconds: string; } }[]>([])
+function splitSeconds(total_seconds: number, format?: boolean): Duration | FormattedDuration {
+  const hours = Math.floor(total_seconds / 3600);
+  const minutes = Math.floor((total_seconds - hours * 3600) / 60);
+  const seconds = Math.floor(total_seconds - hours * 3600 - minutes * 60);
+  return ({
+    hours: format ? String(hours).padStart(2, '0') : hours,
+    minutes: format ? String(minutes).padStart(2, '0') : minutes,
+    seconds: format ? String(seconds).padStart(2, '0') : seconds,
+  } as Duration | FormattedDuration)
+}
 
-function compute(event: Event) {
+function compute() {
   const distance_meter = form_distance.value
 
-  const duration_hour = form_duration_hour.value || 0
-  const duration_minutes = form_duration_minutes.value || 0
-  const duration_seconds = form_duration_seconds.value || 0
+  const duration_hour = form_duration.value.hours || 0
+  const duration_minutes = form_duration.value.minutes || 0
+  const duration_seconds = form_duration.value.seconds || 0
 
   let pace_seconds_meter = 0
   if (duration_hour === 0 && duration_minutes === 0 && duration_seconds === 0) {
     // Compute time from distance and pace
-    const pace_minutes = form_pace_minutes.value || 0
-    const pace_seconds = form_pace_seconds.value || 0
+    const pace_minutes = form_pace.value.minutes || 0
+    const pace_seconds = form_pace.value.seconds || 0
     let pace_seconds_km = (pace_minutes * 60) + pace_seconds
     pace_seconds_meter = pace_seconds_km / 1000
     let seconds_duration = pace_seconds_meter * distance_meter
 
-    const hours = Math.floor(seconds_duration / 3600);
-    const minutes = Math.floor((seconds_duration - hours * 3600) / 60);
-    const seconds = Math.floor(seconds_duration - hours * 3600 - minutes * 60);
-    form_duration_hour.value = hours
-    form_duration_minutes.value = minutes
-    form_duration_seconds.value = seconds
+    const duration = splitSeconds(seconds_duration)
+    form_duration.value = (duration as Duration)
   } else {
     // Compute pace from distance and time
     let seconds_duration = (duration_hour * 3600) + (duration_minutes * 60) + duration_seconds
@@ -41,8 +51,8 @@ function compute(event: Event) {
 
     const minutes = Math.floor(pace_seconds_km / 60);
     const seconds = Math.floor(pace_seconds_km - minutes * 60);
-    form_pace_minutes.value = minutes
-    form_pace_seconds.value = seconds
+    form_pace.value.minutes = minutes
+    form_pace.value.seconds = seconds
   }
 
   let _laps = []
@@ -50,31 +60,17 @@ function compute(event: Event) {
   let intermediate = 0
   for (intermediate = 0; intermediate < distance_meter; intermediate = intermediate + increment) {
     const total_seconds = intermediate * pace_seconds_meter
-    const hours = Math.floor(total_seconds / 3600);
-    const minutes = Math.floor((total_seconds - hours * 3600) / 60);
-    const seconds = Math.floor(total_seconds - hours * 3600 - minutes * 60);
     _laps.push({
       distance: intermediate / 1000,
-      duration: {
-        hours: String(hours).padStart(2, '0'),
-        minutes: String(minutes).padStart(2, '0'),
-        seconds: String(seconds).padStart(2, '0'),
-      }
+      duration: (splitSeconds(total_seconds, true) as FormattedDuration),
     })
   }
   if (intermediate - increment < distance_meter) {
     intermediate = distance_meter - increment
     const total_seconds = distance_meter * pace_seconds_meter
-    const hours = Math.floor(total_seconds / 3600);
-    const minutes = Math.floor((total_seconds - hours * 3600) / 60);
-    const seconds = Math.floor(total_seconds - hours * 3600 - minutes * 60);
     _laps.push({
       distance: distance_meter / 1000,
-      duration: {
-        hours: String(hours).padStart(2, '0'),
-        minutes: String(minutes).padStart(2, '0'),
-        seconds: String(seconds).padStart(2, '0'),
-      }
+      duration: (splitSeconds(total_seconds, true) as FormattedDuration),
     })
   }
 
@@ -88,11 +84,8 @@ function setDistance(distance: number) {
 
 function reset() {
   form_distance.value = undefined
-  form_duration_hour.value = undefined
-  form_duration_minutes.value = undefined
-  form_duration_seconds.value = undefined
-  form_pace_minutes.value = undefined
-  form_pace_seconds.value = undefined
+  form_duration.value = { hours: 0, minutes: 0, seconds: 0 }
+  form_pace.value = { minutes: 0, seconds: 0 }
   laps.value = []
 }
 
@@ -120,19 +113,19 @@ function reset() {
           <div class="field">
             <label class="label">Time</label>
             <div class="level">
-              <input v-model="form_duration_hour" class="input" type="number" placeholder="Hour">
+              <input v-model="form_duration.hours" class="input" type="number" placeholder="Hour">
               <label class="label">:</label>
-              <input v-model="form_duration_minutes" class="input" type="number" placeholder="Minutes">
+              <input v-model="form_duration.minutes" class="input" type="number" placeholder="Minutes">
               <label class="label">:</label>
-              <input v-model="form_duration_seconds" class="input" type="number" placeholder="Seconds">
+              <input v-model="form_duration.seconds" class="input" type="number" placeholder="Seconds">
             </div>
           </div>
           <div class="field">
             <label class="label">Pace (min/km)</label>
             <div class="level">
-              <input v-model="form_pace_minutes" class="input" type="number" placeholder="Minutes">
+              <input v-model="form_pace.minutes" class="input" type="number" placeholder="Minutes">
               <label class="label">:</label>
-              <input v-model="form_pace_seconds" class="input" type="number" placeholder="Seconds">
+              <input v-model="form_pace.seconds" class="input" type="number" placeholder="Seconds">
             </div>
           </div>
           <div class="field buttons has-addons">
