@@ -5,7 +5,7 @@ type Duration = { hours: number; minutes: number; seconds: number }
 type FormattedDuration = { hours: string; minutes: string; seconds: string }
 type Pace = { minutes: number; seconds: number }
 
-const form_distance = ref()
+const form_distance = ref<number>()
 const form_duration = ref<Duration>({ hours: 0, minutes: 0, seconds: 0 })
 const form_pace = ref<Pace>({ minutes: 0, seconds: 0 })
 const laps = ref<{
@@ -25,7 +25,7 @@ function splitSeconds(total_seconds: number, format?: boolean): Duration | Forma
 }
 
 function compute() {
-  const distance_meter = form_distance.value
+  const distance_meter = form_distance.value || 0
 
   const duration_hour = form_duration.value.hours || 0
   const duration_minutes = form_duration.value.minutes || 0
