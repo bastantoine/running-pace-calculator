@@ -131,36 +131,51 @@ function resetVMA() {
       </div>
       <div class="columns block">
         <div class="column is-9">
-          <div class="field">
+          <div class="block">
             <label class="label">Distance (in m)</label>
-            <input v-model="form_distance" class="input" type="number" placeholder="Distance">
+            <div class="field has-addons">
+              <p class="control is-expanded">
+                <input v-model="form_distance" class="input" type="number" placeholder="Distance">
+              </p>
+              <p class="control"><a class="button is-static">m</a></p>
+              <p class="control"><button class="button" @click="setDistance(10000)">10km</button></p>
+              <p class="control"><button class="button" @click="setDistance(15000)">15km</button></p>
+              <p class="control"><button class="button" @click="setDistance(20000)">20km</button></p>
+              <p class="control"><button class="button" @click="setDistance(21097)">Half-marathon</button></p>
+              <p class="control"><button class="button" @click="setDistance(42195)">Marathon</button></p>
+            </div>
           </div>
-          <div class="field buttons has-addons">
-            <button class="button" @click="setDistance(10000)">10km</button>
-            <button class="button" @click="setDistance(15000)">15km</button>
-            <button class="button" @click="setDistance(20000)">20km</button>
-            <button class="button" @click="setDistance(21097)">Half-marathon</button>
-            <button class="button" @click="setDistance(42195)">Marathon</button>
-          </div>
-          <div class="field">
+          <div class="block">
             <label class="label">Time</label>
-            <div class="level">
-              <input v-model="form_duration.hours" class="input" type="number" placeholder="Hour">
-              <label class="label">:</label>
-              <input v-model="form_duration.minutes" class="input" type="number" placeholder="Minutes">
-              <label class="label">:</label>
-              <input v-model="form_duration.seconds" class="input" type="number" placeholder="Seconds">
+            <div class="field has-addons">
+              <p class="control is-expanded">
+                <input v-model="form_duration.hours" class="input" type="number" placeholder="Hour">
+              </p>
+              <p class="control"><a class="button is-static">h</a></p>
+              <p class="control is-expanded">
+                <input v-model="form_duration.minutes" class="input" type="number" placeholder="Minutes">
+              </p>
+              <p class="control"><a class="button is-static">m</a></p>
+              <p class="control is-expanded">
+                <input v-model="form_duration.seconds" class="input" type="number" placeholder="Seconds">
+              </p>
+              <p class="control"><a class="button is-static">s</a></p>
             </div>
           </div>
-          <div class="field">
+          <div class="block">
             <label class="label">Pace (min/km)</label>
-            <div class="level">
-              <input v-model="form_pace.minutes" class="input" type="number" placeholder="Minutes">
-              <label class="label">:</label>
-              <input v-model="form_pace.seconds" class="input" type="number" placeholder="Seconds">
+            <div class="field has-addons">
+              <p class="control is-expanded">
+                <input v-model="form_pace.minutes" class="input" type="number" placeholder="Minutes">
+              </p>
+              <p class="control"><a class="button is-static">m</a></p>
+              <p class="control is-expanded">
+                <input v-model="form_pace.seconds" class="input" type="number" placeholder="Seconds">
+              </p>
+              <p class="control"><a class="button is-static">s</a></p>
             </div>
           </div>
-          <div class="field buttons has-addons">
+          <div class="block buttons has-addons">
             <button class="button is-success" @click="computePace">Compute</button>
             <button class="button is-danger" @click="resetPace">Reset</button>
           </div>
@@ -180,9 +195,11 @@ function resetVMA() {
       </div>
       <div class="columns block">
         <div class="column is-9">
-          <div class="field">
-            <label class="label">VMA (in km/h)</label>
-            <input v-model="vma" class="input" type="number" placeholder="VMA">
+          <div class="field has-addons">
+            <p class="control is-expanded">
+              <input v-model="vma" class="input" type="number" placeholder="VMA">
+            </p>
+            <p class="control"><a class="button is-static">km/h</a></p>
           </div>
           <div class="field buttons has-addons">
             <button class="button is-success" @click="computeVMA">Compute</button>
