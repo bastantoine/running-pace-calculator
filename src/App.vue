@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 
 type Duration = { hours: number; minutes: number; seconds: number }
+type ShortDuration = { minutes: number; seconds: number }
 type FormattedDuration = { hours: string; minutes: string; seconds: string }
 type Pace = { minutes: number; seconds: number }
 
@@ -11,6 +12,11 @@ const form_pace = ref<Pace>({ minutes: 0, seconds: 0 })
 const laps = ref<{
   distance: number;
   duration: FormattedDuration;
+}[]>([])
+const vma = ref<number>()
+const splits = ref<{
+  value: number;
+  duration: ShortDuration;
 }[]>([])
 
 function splitSeconds(total_seconds: number, format?: boolean): Duration | FormattedDuration {
@@ -24,7 +30,10 @@ function splitSeconds(total_seconds: number, format?: boolean): Duration | Forma
   } as Duration | FormattedDuration)
 }
 
-function compute() {
+// Helper to round to 2 decimals
+const round = (num: number) => (Math.round(num * 100) / 100)
+
+function computePace() {
   const distance_meter = form_distance.value || 0
 
   const duration_hour = form_duration.value.hours || 0
@@ -82,11 +91,31 @@ function setDistance(distance: number) {
   form_distance.value = distance
 }
 
-function reset() {
+function resetPace() {
   form_distance.value = undefined
   form_duration.value = { hours: 0, minutes: 0, seconds: 0 }
   form_pace.value = { minutes: 0, seconds: 0 }
-  laps.value = []
+  splits.value = []
+}
+
+function computeVMA() {
+  const vma_kmh = vma.value || 0
+  if (vma_kmh <= 0) {
+    splits.value = []
+    return
+  }
+  splits.value = [0.8, 0.85, 0.9, 0.95, 1, 1.05, 1.1].map(percent => {
+    const duration = 60 / (percent * vma_kmh)
+    return {
+      value: round(percent * 100),
+      duration: { minutes: Math.floor(duration), seconds: round(Math.floor((duration - Math.floor(duration)) * 60) / 100) * 100 },
+    }
+  })
+}
+
+function resetVMA() {
+  vma.value = undefined
+  splits.value = []
 }
 
 </script>
@@ -95,7 +124,10 @@ function reset() {
   <main>
     <section class="section">
       <div class="block">
-        <h1 class="title">Running pace calculator</h1>
+        <h1 class="title">Running tools</h1>
+      </div>
+      <div class="block">
+        <h3 class="subtitle">Pace calculator</h3>
       </div>
       <div class="columns block">
         <div class="column is-9">
@@ -129,8 +161,8 @@ function reset() {
             </div>
           </div>
           <div class="field buttons has-addons">
-            <button class="button is-success" @click="compute">Compute</button>
-            <button class="button is-danger" @click="reset">Reset</button>
+            <button class="button is-success" @click="computePace">Compute</button>
+            <button class="button is-danger" @click="resetPace">Reset</button>
           </div>
         </div>
         <div class="column is-offset-1 is-2">
@@ -138,6 +170,32 @@ function reset() {
             <tr v-for="lap in laps">
               <td style="text-align: right;" class="pr-2">{{ lap.distance }} km</td>
               <td class="pl-2">{{ lap.duration.hours }}:{{ lap.duration.minutes }}:{{ lap.duration.seconds }}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <hr />
+      <div class="block">
+        <h3 class="subtitle">VMA</h3>
+      </div>
+      <div class="columns block">
+        <div class="column is-9">
+          <div class="field">
+            <label class="label">VMA (in km/h)</label>
+            <input v-model="vma" class="input" type="number" placeholder="VMA">
+          </div>
+          <div class="field buttons has-addons">
+            <button class="button is-success" @click="computeVMA">Compute</button>
+            <button class="button is-danger" @click="resetVMA">Reset</button>
+          </div>
+        </div>
+        <div class="column is-offset-1 is-2">
+          <table>
+            <tr v-for="split in splits">
+              <td style="text-align: right;" class="pr-2">{{ split.value }}%</td>
+              <td class="pl-2">{{ split.duration.minutes }}m{{ split.duration.seconds ? split.duration.seconds + 's' :
+                '' }}/km
+              </td>
             </tr>
           </table>
         </div>
