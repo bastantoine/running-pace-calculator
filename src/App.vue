@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-type Duration = { hours: number; minutes: number; seconds: number }
-type ShortDuration = { minutes: number; seconds: number }
+type Duration = { hours: number | null; minutes: number | null; seconds: number | null }
+type ShortDuration = { minutes: number | null; seconds: number | null }
 type FormattedDuration = { hours: string; minutes: string; seconds: string }
-type Pace = { minutes: number; seconds: number }
+type Pace = { minutes: number | null; seconds: number | null }
 
 const form_distance = ref<number>()
-const form_duration = ref<Duration>({ hours: 0, minutes: 0, seconds: 0 })
-const form_pace = ref<Pace>({ minutes: 0, seconds: 0 })
+const form_duration = ref<Duration>({ hours: null, minutes: null, seconds: null })
+const form_pace = ref<Pace>({ minutes: null, seconds: null })
 const laps = ref<{
   distance: number;
   duration: FormattedDuration;
@@ -93,8 +93,8 @@ function setDistance(distance: number) {
 
 function resetPace() {
   form_distance.value = undefined
-  form_duration.value = { hours: 0, minutes: 0, seconds: 0 }
-  form_pace.value = { minutes: 0, seconds: 0 }
+  form_duration.value = { hours: null, minutes: null, seconds: null }
+  form_pace.value = { minutes: null, seconds: null }
   splits.value = []
 }
 
