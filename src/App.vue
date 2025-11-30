@@ -163,10 +163,9 @@ function resetVMA() {
                 </p>
                 <p class="control"><a class="button is-static field-addon">m</a></p>
               </div>
-              <div class="field has-addons">
-                <p class="control" v-for="distance in precomputed_distances">
-                  <button class="button" @click="setDistance(distance.value)">{{ distance.label }}</button>
-                </p>
+              <div class="buttons">
+                <button v-for="distance in precomputed_distances" class="button" @click="setDistance(distance.value)">{{
+                  distance.label }}</button>
               </div>
             </div>
           </div>
