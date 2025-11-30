@@ -103,7 +103,7 @@ function resetPace() {
   form_distance.value = undefined
   form_duration.value = { hours: null, minutes: null, seconds: null }
   form_pace.value = { minutes: null, seconds: null }
-  splits.value = []
+  laps.value = []
 }
 
 function computeVMA() {
