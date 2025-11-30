@@ -18,6 +18,14 @@ const splits = ref<{
   value: number;
   duration: ShortDuration;
 }[]>([])
+const is_visible_mobile = "is-hidden-tablet is-hidden-desktop is-hidden-widescreen is-hidden-fullhd"
+const precomputed_distances = [
+  { value: 10000, label: '10km' },
+  { value: 15000, label: '15km' },
+  { value: 20000, label: '20km' },
+  { value: 21097, label: 'Half-marathon' },
+  { value: 42195, label: 'Marathon' },
+]
 
 function splitSeconds(total_seconds: number, format?: boolean): Duration | FormattedDuration {
   const hours = Math.floor(total_seconds / 3600);
@@ -120,6 +128,12 @@ function resetVMA() {
 
 </script>
 
+<style scoped>
+.field-addon {
+  font-family: monospace;
+}
+</style>
+
 <template>
   <main>
     <section class="section">
@@ -133,46 +147,106 @@ function resetVMA() {
         <div class="column is-9">
           <div class="block">
             <label class="label">Distance (in m)</label>
-            <div class="field has-addons">
+            <div class="field has-addons is-hidden-mobile">
               <p class="control is-expanded">
                 <input v-model="form_distance" class="input" type="number" placeholder="Distance">
               </p>
-              <p class="control"><a class="button is-static">m</a></p>
-              <p class="control"><button class="button" @click="setDistance(10000)">10km</button></p>
-              <p class="control"><button class="button" @click="setDistance(15000)">15km</button></p>
-              <p class="control"><button class="button" @click="setDistance(20000)">20km</button></p>
-              <p class="control"><button class="button" @click="setDistance(21097)">Half-marathon</button></p>
-              <p class="control"><button class="button" @click="setDistance(42195)">Marathon</button></p>
+              <p class="control"><a class="button is-static field-addon">m</a></p>
+              <p class="control" v-for="distance in precomputed_distances">
+                <button class="button" @click="setDistance(distance.value)">{{ distance.label }}</button>
+              </p>
+            </div>
+            <div :class=is_visible_mobile>
+              <div class="field has-addons">
+                <p class="control is-expanded">
+                  <input v-model="form_distance" class="input" type="number" placeholder="Distance">
+                </p>
+                <p class="control"><a class="button is-static field-addon">m</a></p>
+              </div>
+              <div class="field has-addons">
+                <p class="control" v-for="distance in precomputed_distances">
+                  <button class="button" @click="setDistance(distance.value)">{{ distance.label }}</button>
+                </p>
+              </div>
             </div>
           </div>
           <div class="block">
             <label class="label">Time</label>
-            <div class="field has-addons">
+            <div class="field has-addons is-hidden-mobile">
               <p class="control is-expanded">
                 <input v-model="form_duration.hours" class="input" type="number" placeholder="Hour">
               </p>
-              <p class="control"><a class="button is-static">h</a></p>
+              <p class="control"><a class="button is-static field-addon">h</a></p>
               <p class="control is-expanded">
                 <input v-model="form_duration.minutes" class="input" type="number" placeholder="Minutes">
               </p>
-              <p class="control"><a class="button is-static">m</a></p>
+              <p class="control"><a class="button is-static field-addon">m</a></p>
               <p class="control is-expanded">
                 <input v-model="form_duration.seconds" class="input" type="number" placeholder="Seconds">
               </p>
-              <p class="control"><a class="button is-static">s</a></p>
+              <p class="control"><a class="button is-static field-addon">s</a></p>
+            </div>
+
+            <div :class="is_visible_mobile">
+              <div class="field has-addons mb-0">
+                <p class="control is-expanded">
+                  <input v-model="form_duration.hours" class="input" type="number" placeholder="Hour"
+                    style="border-bottom-left-radius: 0px;">
+                </p>
+                <p class="control">
+                  <a class="button is-static field-addon" style="border-bottom-right-radius: 0px;">h</a>
+                </p>
+              </div>
+              <div class="field has-addons mb-0">
+                <p class="control is-expanded">
+                  <input v-model="form_duration.minutes" class="input" type="number" placeholder="Minutes"
+                    style="border-bottom-left-radius: 0px; border-top-left-radius: 0px;border-top: none;border-bottom: none;">
+                </p>
+                <p class="control">
+                  <a class="button is-static field-addon"
+                    style="border-bottom-right-radius: 0px; border-top-right-radius: 0px;border-top: none;border-bottom: none;height:100%">m</a>
+                </p>
+              </div>
+              <div class="field has-addons">
+                <p class="control is-expanded">
+                  <input v-model="form_duration.seconds" class="input" type="number" placeholder="Seconds"
+                    style="border-top-left-radius: 0px;">
+                </p>
+                <p class="control">
+                  <a class="button is-static field-addon" style="border-top-right-radius: 0px;">s</a>
+                </p>
+              </div>
             </div>
           </div>
           <div class="block">
             <label class="label">Pace (min/km)</label>
-            <div class="field has-addons">
+            <div class="field has-addons is-hidden-mobile">
               <p class="control is-expanded">
                 <input v-model="form_pace.minutes" class="input" type="number" placeholder="Minutes">
               </p>
-              <p class="control"><a class="button is-static">m</a></p>
+              <p class="control"><a class="button is-static field-addon">m</a></p>
               <p class="control is-expanded">
                 <input v-model="form_pace.seconds" class="input" type="number" placeholder="Seconds">
               </p>
-              <p class="control"><a class="button is-static">s</a></p>
+              <p class="control"><a class="button is-static field-addon">s</a></p>
+            </div>
+            <div :class="is_visible_mobile">
+              <div class="field has-addons mb-0">
+                <p class="control is-expanded">
+                  <input v-model="form_pace.minutes" class="input" type="number" placeholder="Minutes"
+                    style="border-bottom-left-radius: 0px;border-bottom: none;">
+                </p>
+                <p class="control"><a class="button is-static field-addon"
+                    style="border-bottom-right-radius: 0px;border-bottom: none;">m</a></p>
+              </div>
+              <div class="field has-addons">
+                <p class="control is-expanded">
+                  <input v-model="form_pace.seconds" class="input" type="number" placeholder="Seconds"
+                    style="border-top-left-radius: 0px;">
+                </p>
+                <p class="control"><a class="button is-static field-addon" style="border-top-right-radius: 0px;">s</a>
+                </p>
+              </div>
             </div>
           </div>
           <div class="block buttons has-addons">
@@ -199,7 +273,7 @@ function resetVMA() {
             <p class="control is-expanded">
               <input v-model="vma" class="input" type="number" placeholder="VMA">
             </p>
-            <p class="control"><a class="button is-static">km/h</a></p>
+            <p class="control"><a class="button is-static field-addon">km/h</a></p>
           </div>
           <div class="field buttons has-addons">
             <button class="button is-success" @click="computeVMA">Compute</button>
