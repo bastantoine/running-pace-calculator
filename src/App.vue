@@ -279,16 +279,26 @@ function resetVMA() {
             <button class="button is-danger" @click="resetVMA">Reset</button>
           </div>
         </div>
-        <div class="column is-offset-1 is-2">
-          <table>
-            <tr v-for="split in splits">
-              <td style="text-align: right;" class="pr-2">{{ split.value }}%</td>
-              <td class="pl-2">{{ split.duration.minutes }}m{{ split.duration.seconds ? split.duration.seconds + 's' :
+      </div>
+      <div class="block">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>VMA</th>
+              <th v-for="split in splits">{{ split.value }} %</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>Pace</th>
+              <td v-for="split in splits">{{ split.duration.minutes }}m{{ split.duration.seconds ?
+                split.duration.seconds
+                + 's' :
                 '' }}/km
               </td>
             </tr>
-          </table>
-        </div>
+          </tbody>
+        </table>
       </div>
     </section>
   </main>
