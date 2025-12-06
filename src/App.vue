@@ -280,7 +280,7 @@ function resetVMA() {
           </div>
         </div>
       </div>
-      <div class="block">
+      <div class="block" v-if="splits.length > 0">
         <table class="table">
           <thead>
             <tr>
