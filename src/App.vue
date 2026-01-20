@@ -6,6 +6,7 @@ type ShortDuration = { minutes: number | null; seconds: number | null }
 type FormattedDuration = { hours: string; minutes: string; seconds: string }
 type Pace = { minutes: number | null; seconds: number | null }
 
+// PACE
 const form_distance = ref<number>()
 const form_duration = ref<Duration>({ hours: null, minutes: null, seconds: null })
 const form_pace = ref<Pace>({ minutes: null, seconds: null })
@@ -13,12 +14,6 @@ const laps = ref<{
   distance: number;
   duration: FormattedDuration;
 }[]>([])
-const vma = ref<number>()
-const splits = ref<{
-  value: number;
-  duration: ShortDuration;
-}[]>([])
-const is_visible_mobile = "is-hidden-tablet is-hidden-desktop is-hidden-widescreen is-hidden-fullhd"
 const precomputed_distances = [
   { value: 10000, label: '10km' },
   { value: 15000, label: '15km' },
@@ -26,6 +21,27 @@ const precomputed_distances = [
   { value: 21097, label: 'Half-marathon' },
   { value: 42195, label: 'Marathon' },
 ]
+
+// VMA
+const vma = ref<number>()
+const splits = ref<{
+  value: number;
+  rawDuration: number;
+  duration: ShortDuration;
+}[]>([])
+const allDistances = {
+  short: [100, 200, 300, 400, 500, 600, 800],
+  medium: [1000, 1500, 2000, 2500, 3000, 4000, 5000],
+  long: [10000, 15000, 20000, 21097, 42195],
+}
+type distanceType = keyof typeof allDistances
+const duration_based_on_vma = ref<{
+  [k in distanceType]: { [k: number]: (Duration)[] }
+}>({ short: {}, medium: {}, long: {} })
+const vma_percentages = [0.7, 0.8, 0.85, 0.9, 0.95, 1, 1.05, 1.1];
+
+// MISC
+const is_visible_mobile = "is-hidden-tablet is-hidden-desktop is-hidden-widescreen is-hidden-fullhd"
 
 function splitSeconds(total_seconds: number, format?: boolean): Duration | FormattedDuration {
   const hours = Math.floor(total_seconds / 3600);
@@ -40,6 +56,23 @@ function splitSeconds(total_seconds: number, format?: boolean): Duration | Forma
 
 // Helper to round to 2 decimals
 const round = (num: number) => (Math.round(num * 100) / 100)
+
+function formatDuration(duration: Duration): string {
+  const hours = String(duration.hours || 0).padStart(2, '0')
+  const minutes = String(duration.minutes || 0).padStart(2, '0')
+  const seconds = String(duration.seconds || 0).padStart(2, '0')
+  if (hours === '00') {
+    return `${minutes}m ${seconds}s`
+  }
+  return `${hours}h ${minutes}m ${seconds}s`
+}
+
+function formatDistance(distance_meter: number): string {
+  if (distance_meter >= 10000) {
+    return `${round(distance_meter / 1000)} km`
+  }
+  return `${distance_meter} m`
+}
 
 function computePace() {
   const distance_meter = form_distance.value || 0
@@ -112,13 +145,27 @@ function computeVMA() {
     splits.value = []
     return
   }
-  splits.value = [0.8, 0.85, 0.9, 0.95, 1, 1.05, 1.1].map(percent => {
+
+  splits.value = vma_percentages.map(percent => {
     const duration = 60 / (percent * vma_kmh)
     return {
       value: round(percent * 100),
+      rawDuration: duration, // in min/km
       duration: { minutes: Math.floor(duration), seconds: round(Math.floor((duration - Math.floor(duration)) * 60) / 100) * 100 },
     }
   })
+
+  for (let [category, distances] of Object.entries(allDistances)) {
+    for (const distance of distances) {
+      duration_based_on_vma.value[(category as keyof typeof allDistances)][distance] = []
+      for (const split of splits.value) {
+        let duration = (split.rawDuration * (distance / 1000))  // in minutes
+        duration = duration * 60 // in seconds
+        duration_based_on_vma.value[(category as keyof typeof allDistances)][distance].push((splitSeconds(duration) as Duration))
+      }
+    }
+  }
+  console.log(duration_based_on_vma.value)
 }
 
 function resetVMA() {
@@ -281,7 +328,7 @@ function resetVMA() {
         </div>
       </div>
       <div class="block" v-if="splits.length > 0">
-        <table class="table">
+        <table class="table is-fullwidth is-striped">
           <thead>
             <tr>
               <th>VMA</th>
@@ -296,6 +343,27 @@ function resetVMA() {
                 + 's' :
                 '' }}/km
               </td>
+            </tr>
+            <tr>
+              <td :colspan="vma_percentages.length + 1" style="text-align: center;">Short distances</td>
+            </tr>
+            <tr v-for="durations, distance in duration_based_on_vma.short">
+              <th>{{ formatDistance(Number(distance)) }}</th>
+              <td v-for="duration in durations">{{ formatDuration(duration) }}</td>
+            </tr>
+            <tr>
+              <td :colspan="vma_percentages.length + 1" style="text-align: center;">Medium distances</td>
+            </tr>
+            <tr v-for="durations, distance in duration_based_on_vma.medium">
+              <th>{{ formatDistance(Number(distance)) }}</th>
+              <td v-for="duration in durations">{{ formatDuration(duration) }}</td>
+            </tr>
+            <tr>
+              <td :colspan="vma_percentages.length + 1" style="text-align: center;">Long distances</td>
+            </tr>
+            <tr v-for="durations, distance in duration_based_on_vma.long">
+              <th>{{ formatDistance(Number(distance)) }}</th>
+              <td v-for="duration in durations">{{ formatDuration(duration) }}</td>
             </tr>
           </tbody>
         </table>
