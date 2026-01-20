@@ -68,6 +68,12 @@ function formatDuration(duration: Duration): string {
 }
 
 function formatDistance(distance_meter: number): string {
+  if (distance_meter == 42195) {
+    return "Marathon"
+  }
+  if (distance_meter == 21097) {
+    return "Half-marathon"
+  }
   if (distance_meter >= 10000) {
     return `${round(distance_meter / 1000)} km`
   }
