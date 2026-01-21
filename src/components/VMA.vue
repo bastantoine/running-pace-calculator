@@ -87,7 +87,6 @@ function computeVMA() {
             }
         }
     }
-    console.log(duration_based_on_vma.value)
 }
 
 function resetVMA() {
