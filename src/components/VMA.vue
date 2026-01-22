@@ -1,16 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { Duration, round } from './utils'
 
-type Duration = { hours: number | null; minutes: number | null; seconds: number | null }
-type ShortDuration = { minutes: number | null; seconds: number | null }
-type FormattedDuration = { hours: string; minutes: string; seconds: string }
-
-// VMA
 const vma = ref<number>()
 const splits = ref<{
     value: number;
     rawDuration: number;
-    duration: ShortDuration;
+    duration: Duration;
 }[]>([])
 const allDistances = {
     short: [100, 200, 300, 400, 500, 600, 800],
@@ -22,31 +18,6 @@ const duration_based_on_vma = ref<{
     [k in distanceType]: { [k: number]: (Duration)[] }
 }>({ short: {}, medium: {}, long: {} })
 const vma_percentages = [0.7, 0.8, 0.85, 0.9, 0.95, 1, 1.05, 1.1];
-
-// MISC
-function splitSeconds(total_seconds: number, format?: boolean): Duration | FormattedDuration {
-    const hours = Math.floor(total_seconds / 3600);
-    const minutes = Math.floor((total_seconds - hours * 3600) / 60);
-    const seconds = Math.floor(total_seconds - hours * 3600 - minutes * 60);
-    return ({
-        hours: format ? String(hours).padStart(2, '0') : hours,
-        minutes: format ? String(minutes).padStart(2, '0') : minutes,
-        seconds: format ? String(seconds).padStart(2, '0') : seconds,
-    } as Duration | FormattedDuration)
-}
-
-// Helper to round to 2 decimals
-const round = (num: number) => (Math.round(num * 100) / 100)
-
-function formatDuration(duration: Duration): string {
-    const hours = String(duration.hours || 0).padStart(2, '0')
-    const minutes = String(duration.minutes || 0).padStart(2, '0')
-    const seconds = String(duration.seconds || 0).padStart(2, '0')
-    if (hours === '00') {
-        return `${minutes}m ${seconds}s`
-    }
-    return `${hours}h ${minutes}m ${seconds}s`
-}
 
 function formatDistance(distance_meter: number): string {
     if (distance_meter == 42195) {
@@ -73,7 +44,7 @@ function computeVMA() {
         return {
             value: round(percent * 100),
             rawDuration: duration, // in min/km
-            duration: { minutes: Math.floor(duration), seconds: round(Math.floor((duration - Math.floor(duration)) * 60) / 100) * 100 },
+            duration: new Duration({ minutes: Math.floor(duration), seconds: round(Math.floor((duration - Math.floor(duration)) * 60) / 100) * 100 }),
         }
     })
 
@@ -83,7 +54,7 @@ function computeVMA() {
             for (const split of splits.value) {
                 let duration = (split.rawDuration * (distance / 1000))  // in minutes
                 duration = duration * 60 // in seconds
-                duration_based_on_vma.value[(category as keyof typeof allDistances)][distance].push((splitSeconds(duration) as Duration))
+                duration_based_on_vma.value[(category as keyof typeof allDistances)][distance].push((Duration.fromSeconds(duration)))
             }
         }
     }
@@ -128,10 +99,7 @@ function resetVMA() {
             <tbody>
                 <tr>
                     <th>Pace</th>
-                    <td v-for="split in splits">{{ split.duration.minutes }}m{{ split.duration.seconds ?
-                        split.duration.seconds
-                        + 's' :
-                        '' }}/km
+                    <td v-for="split in splits">{{ split.duration.format() }}/km
                     </td>
                 </tr>
                 <tr>
@@ -139,21 +107,21 @@ function resetVMA() {
                 </tr>
                 <tr v-for="durations, distance in duration_based_on_vma.short">
                     <th>{{ formatDistance(Number(distance)) }}</th>
-                    <td v-for="duration in durations">{{ formatDuration(duration) }}</td>
+                    <td v-for="duration in durations">{{ duration.format() }}</td>
                 </tr>
                 <tr>
                     <td :colspan="vma_percentages.length + 1" style="text-align: center;">Medium distances</td>
                 </tr>
                 <tr v-for="durations, distance in duration_based_on_vma.medium">
                     <th>{{ formatDistance(Number(distance)) }}</th>
-                    <td v-for="duration in durations">{{ formatDuration(duration) }}</td>
+                    <td v-for="duration in durations">{{ duration.format() }}</td>
                 </tr>
                 <tr>
                     <td :colspan="vma_percentages.length + 1" style="text-align: center;">Long distances</td>
                 </tr>
                 <tr v-for="durations, distance in duration_based_on_vma.long">
                     <th>{{ formatDistance(Number(distance)) }}</th>
-                    <td v-for="duration in durations">{{ formatDuration(duration) }}</td>
+                    <td v-for="duration in durations">{{ duration.format() }}</td>
                 </tr>
             </tbody>
         </table>

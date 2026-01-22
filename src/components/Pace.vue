@@ -1,17 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { Duration } from './utils';
 
-type Duration = { hours: number | null; minutes: number | null; seconds: number | null }
-type FormattedDuration = { hours: string; minutes: string; seconds: string }
-type Pace = { minutes: number | null; seconds: number | null }
-
-// PACE
 const form_distance = ref<number>()
-const form_duration = ref<Duration>({ hours: null, minutes: null, seconds: null })
-const form_pace = ref<Pace>({ minutes: null, seconds: null })
+const form_duration = ref<Duration>(new Duration())
+const form_pace = ref<Duration>(new Duration())
 const laps = ref<{
     distance: number;
-    duration: FormattedDuration;
+    duration: Duration;
 }[]>([])
 const precomputed_distances = [
     { value: 10000, label: '10km' },
@@ -23,17 +19,6 @@ const precomputed_distances = [
 
 // MISC
 const is_visible_mobile = "is-hidden-tablet is-hidden-desktop is-hidden-widescreen is-hidden-fullhd"
-
-function splitSeconds(total_seconds: number, format?: boolean): Duration | FormattedDuration {
-    const hours = Math.floor(total_seconds / 3600);
-    const minutes = Math.floor((total_seconds - hours * 3600) / 60);
-    const seconds = Math.floor(total_seconds - hours * 3600 - minutes * 60);
-    return ({
-        hours: format ? String(hours).padStart(2, '0') : hours,
-        minutes: format ? String(minutes).padStart(2, '0') : minutes,
-        seconds: format ? String(seconds).padStart(2, '0') : seconds,
-    } as Duration | FormattedDuration)
-}
 
 function computePace() {
     const distance_meter = form_distance.value || 0
@@ -49,15 +34,14 @@ function computePace() {
         const pace_seconds = form_pace.value.seconds || 0
         let pace_seconds_km = (pace_minutes * 60) + pace_seconds
         pace_seconds_meter = pace_seconds_km / 1000
-        let seconds_duration = pace_seconds_meter * distance_meter
+        const seconds_duration = pace_seconds_meter * distance_meter
 
-        const duration = splitSeconds(seconds_duration)
-        form_duration.value = (duration as Duration)
+        form_duration.value = Duration.fromSeconds(seconds_duration)
     } else {
         // Compute pace from distance and time
-        let seconds_duration = (duration_hour * 3600) + (duration_minutes * 60) + duration_seconds
-        let distance_km = distance_meter / 1000
-        let pace_seconds_km = seconds_duration / distance_km
+        const seconds_duration = (duration_hour * 3600) + (duration_minutes * 60) + duration_seconds
+        const distance_km = distance_meter / 1000
+        const pace_seconds_km = seconds_duration / distance_km
         pace_seconds_meter = pace_seconds_km / 1000
 
         const minutes = Math.floor(pace_seconds_km / 60);
@@ -71,9 +55,13 @@ function computePace() {
     let intermediate = 0
     for (intermediate = 0; intermediate < distance_meter; intermediate = intermediate + increment) {
         const total_seconds = intermediate * pace_seconds_meter
+        // _laps.push({
+        //     distance: intermediate / 1000,
+        //     duration: (splitSeconds(total_seconds, true) as FormattedDuration),
+        // })
         _laps.push({
             distance: intermediate / 1000,
-            duration: (splitSeconds(total_seconds, true) as FormattedDuration),
+            duration: (Duration.fromSeconds(total_seconds)),
         })
     }
     if (intermediate - increment < distance_meter) {
@@ -81,7 +69,7 @@ function computePace() {
         const total_seconds = distance_meter * pace_seconds_meter
         _laps.push({
             distance: distance_meter / 1000,
-            duration: (splitSeconds(total_seconds, true) as FormattedDuration),
+            duration: (Duration.fromSeconds(total_seconds)),
         })
     }
 
@@ -95,8 +83,8 @@ function setDistance(distance: number) {
 
 function resetPace() {
     form_distance.value = undefined
-    form_duration.value = { hours: null, minutes: null, seconds: null }
-    form_pace.value = { minutes: null, seconds: null }
+    form_duration.value = new Duration()
+    form_pace.value = new Duration()
     laps.value = []
 }
 
@@ -120,7 +108,7 @@ function resetPace() {
                     <p class="control"><a class="button is-static field-addon">m</a></p>
                     <p class="control" v-for="distance in precomputed_distances">
                         <button class="button" @click="setDistance(distance.value)">{{ distance.label
-                        }}</button>
+                            }}</button>
                     </p>
                 </div>
                 <div :class=is_visible_mobile>
@@ -226,8 +214,7 @@ function resetPace() {
             <table>
                 <tr v-for="lap in laps">
                     <td style="text-align: right;" class="pr-2">{{ lap.distance }} km</td>
-                    <td class="pl-2">{{ lap.duration.hours }}:{{ lap.duration.minutes }}:{{ lap.duration.seconds
-                    }}</td>
+                    <td class="pl-2">{{ lap.duration.format() }}</td>
                 </tr>
             </table>
         </div>
