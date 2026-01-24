@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { Duration, round } from './utils'
 
 const vma = ref<number>()
@@ -18,6 +18,14 @@ const duration_based_on_vma = ref<{
     [k in distanceType]: { [k: number]: (Duration)[] }
 }>({ short: {}, medium: {}, long: {} })
 const vma_percentages = [0.7, 0.8, 0.85, 0.9, 0.95, 1, 1.05, 1.1];
+
+onMounted(() => {
+    const localVMA = localStorage.getItem('vma')
+    if (localVMA) {
+        vma.value = Number(localVMA)
+        computeVMA()
+    }
+})
 
 function formatDistance(distance_meter: number): string {
     if (distance_meter == 42195) {
@@ -38,6 +46,7 @@ function computeVMA() {
         splits.value = []
         return
     }
+    localStorage.setItem('vma', vma_kmh.toString())
 
     splits.value = vma_percentages.map(percent => {
         const duration = 60 / (percent * vma_kmh)
@@ -63,6 +72,7 @@ function computeVMA() {
 function resetVMA() {
     vma.value = undefined
     splits.value = []
+    localStorage.removeItem('vma')
 }
 
 </script>
