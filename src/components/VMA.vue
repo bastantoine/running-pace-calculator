@@ -210,9 +210,7 @@ function resetVMA() {
                     <table class="table is-fullwidth is-striped">
                         <thead>
                             <tr>
-                                <td colspan="2" style="text-align: center;">
-                                    <span class="is-size-5">{{ formatDistance(Number(distance)) }}</span>
-                                </td>
+                                <th colspan="2" style="text-align: center;">{{ formatDistance(Number(distance)) }}</th>
                             </tr>
                             <tr>
                                 <th>% VMA</th>
@@ -235,9 +233,7 @@ function resetVMA() {
                     <table class="table is-fullwidth is-striped">
                         <thead>
                             <tr>
-                                <td colspan="2" style="text-align: center;">
-                                    <span class="is-size-5">{{ formatDistance(Number(distance)) }}</span>
-                                </td>
+                                <th colspan="2" style="text-align: center;">{{ formatDistance(Number(distance)) }}</th>
                             </tr>
                             <tr>
                                 <th>% VMA</th>
@@ -260,8 +256,7 @@ function resetVMA() {
                     <table class="table is-fullwidth is-striped">
                         <thead>
                             <tr>
-                                <td colspan="2" style="text-align: center;"><span class="is-size-5">{{
-                                    formatDistance(Number(distance)) }}</span></td>
+                                <th colspan="2" style="text-align: center;">{{ formatDistance(Number(distance)) }}</th>
                             </tr>
                             <tr>
                                 <th>% VMA</th>
