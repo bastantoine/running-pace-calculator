@@ -57,16 +57,19 @@ function computeVMA() {
         }
     })
 
+    const _durations: typeof duration_based_on_vma.value = { short: {}, medium: {}, long: {} }
     for (let [category, distances] of Object.entries(allDistances)) {
         for (const distance of distances) {
-            duration_based_on_vma.value[(category as keyof typeof allDistances)][distance] = []
+            const distances: Duration[] = []
             for (const split of splits.value) {
                 let duration = (split.rawDuration * (distance / 1000))  // in minutes
                 duration = duration * 60 // in seconds
-                duration_based_on_vma.value[(category as keyof typeof allDistances)][distance].push((Duration.fromSeconds(duration)))
+                distances.push((Duration.fromSeconds(duration)))
             }
+            _durations[(category as keyof typeof allDistances)][distance] = distances
         }
     }
+    duration_based_on_vma.value = _durations
 }
 
 function resetVMA() {
