@@ -101,10 +101,8 @@ function resetVMA() {
                     <input v-model="vma" class="input" type="number" placeholder="VMA">
                 </p>
                 <p class="control"><a class="button is-static field-addon">km/h</a></p>
-            </div>
-            <div class="field buttons has-addons">
-                <button class="button is-success" @click="computeVMA">Compute</button>
-                <button class="button is-danger" @click="resetVMA">Reset</button>
+                <p class="control"><button class="button is-success" @click="computeVMA">Compute</button></p>
+                <p class="control"><button class="button is-danger" @click="resetVMA">Reset</button></p>
             </div>
         </div>
     </div>
