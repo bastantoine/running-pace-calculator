@@ -55,10 +55,6 @@ function computePace() {
     let intermediate = 0
     for (intermediate = 0; intermediate < distance_meter; intermediate = intermediate + increment) {
         const total_seconds = intermediate * pace_seconds_meter
-        // _laps.push({
-        //     distance: intermediate / 1000,
-        //     duration: (splitSeconds(total_seconds, true) as FormattedDuration),
-        // })
         _laps.push({
             distance: intermediate / 1000,
             duration: (Duration.fromSeconds(total_seconds)),
@@ -108,7 +104,7 @@ function resetPace() {
                     <p class="control"><a class="button is-static field-addon">m</a></p>
                     <p class="control" v-for="distance in precomputed_distances">
                         <button class="button" @click="setDistance(distance.value)">{{ distance.label
-                            }}</button>
+                        }}</button>
                     </p>
                 </div>
                 <div :class=is_visible_mobile>
