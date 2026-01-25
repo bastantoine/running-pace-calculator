@@ -95,7 +95,7 @@ function resetVMA() {
 
 <template>
     <div class="columns block">
-        <div class="column is-9">
+        <div class="column">
             <div class="field has-addons">
                 <p class="control is-expanded">
                     <input v-model="vma" class="input" type="number" placeholder="VMA">
