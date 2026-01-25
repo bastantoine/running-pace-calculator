@@ -165,9 +165,13 @@ function resetVMA() {
             <span class="is-size-4">Short distances</span><br />
             <template v-for="durations, distance in duration_based_on_vma.short">
                 <div class="box">
-                    <span class="is-size-5">{{ formatDistance(Number(distance)) }}</span>
                     <table class="table is-fullwidth is-striped">
                         <thead>
+                            <tr>
+                                <td colspan="2" style="text-align: center;">
+                                    <span class="is-size-5">{{ formatDistance(Number(distance)) }}</span>
+                                </td>
+                            </tr>
                             <tr>
                                 <th>% VMA</th>
                                 <th>Duration</th>
@@ -186,9 +190,13 @@ function resetVMA() {
             <span class="is-size-4">Medium distances</span><br />
             <template v-for="durations, distance in duration_based_on_vma.medium">
                 <div class="box">
-                    <span class="is-size-5">{{ formatDistance(Number(distance)) }}</span>
                     <table class="table is-fullwidth is-striped">
                         <thead>
+                            <tr>
+                                <td colspan="2" style="text-align: center;">
+                                    <span class="is-size-5">{{ formatDistance(Number(distance)) }}</span>
+                                </td>
+                            </tr>
                             <tr>
                                 <th>% VMA</th>
                                 <th>Duration</th>
@@ -207,9 +215,12 @@ function resetVMA() {
             <span class="is-size-4">Long distances</span><br />
             <template v-for="durations, distance in duration_based_on_vma.long">
                 <div class="box">
-                    <span class="is-size-5">{{ formatDistance(Number(distance)) }}</span>
                     <table class="table is-fullwidth is-striped">
                         <thead>
+                            <tr>
+                                <td colspan="2" style="text-align: center;"><span class="is-size-5">{{
+                                    formatDistance(Number(distance)) }}</span></td>
+                            </tr>
                             <tr>
                                 <th>% VMA</th>
                                 <th>Duration</th>
