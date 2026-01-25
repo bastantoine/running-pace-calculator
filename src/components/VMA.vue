@@ -108,42 +108,84 @@ function resetVMA() {
         </div>
     </div>
     <div class="block" v-if="splits.length > 0">
-        <table class="table is-fullwidth is-striped is-hidden-mobile">
-            <thead>
-                <tr>
-                    <th>VMA</th>
-                    <th v-for="split in splits">{{ split.value }} %</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th>Pace</th>
-                    <td v-for="split in splits">{{ split.duration.format() }}/km
-                    </td>
-                </tr>
-                <tr>
-                    <td :colspan="vma_percentages.length + 1" style="text-align: center;">Short distances</td>
-                </tr>
-                <tr v-for="durations, distance in duration_based_on_vma.short">
-                    <th>{{ formatDistance(Number(distance)) }}</th>
-                    <td v-for="duration in durations">{{ duration.duration.format() }}</td>
-                </tr>
-                <tr>
-                    <td :colspan="vma_percentages.length + 1" style="text-align: center;">Medium distances</td>
-                </tr>
-                <tr v-for="durations, distance in duration_based_on_vma.medium">
-                    <th>{{ formatDistance(Number(distance)) }}</th>
-                    <td v-for="duration in durations">{{ duration.duration.format() }}</td>
-                </tr>
-                <tr>
-                    <td :colspan="vma_percentages.length + 1" style="text-align: center;">Long distances</td>
-                </tr>
-                <tr v-for="durations, distance in duration_based_on_vma.long">
-                    <th>{{ formatDistance(Number(distance)) }}</th>
-                    <td v-for="duration in durations">{{ duration.duration.format() }}</td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="is-hidden-mobile">
+            <div class="box">
+                <table class="table is-fullwidth is-striped">
+                    <thead>
+                        <tr>
+                            <th>VMA</th>
+                            <th v-for="split in splits">{{ split.value }} %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>Pace</th>
+                            <td v-for="split in splits">{{ split.duration.format() }}/km
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="box">
+                <table class="table is-fullwidth is-striped">
+                    <thead>
+                        <tr>
+                            <th :colspan="vma_percentages.length + 1" style="text-align: center;">Short distances</th>
+                        </tr>
+                        <tr>
+                            <th>VMA</th>
+                            <th v-for="split in splits">{{ split.value }} %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="durations, distance in duration_based_on_vma.short">
+                            <th>{{ formatDistance(Number(distance)) }}</th>
+                            <td v-for="duration in durations">{{ duration.duration.format() }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="box">
+                <table class="table is-fullwidth is-striped">
+                    <thead>
+                        <tr>
+                            <th :colspan="vma_percentages.length + 1" style="text-align: center;">Medium distances</th>
+                        </tr>
+                        <tr>
+                            <th>VMA</th>
+                            <th v-for="split in splits">{{ split.value }} %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="durations, distance in duration_based_on_vma.medium">
+                            <th>{{ formatDistance(Number(distance)) }}</th>
+                            <td v-for="duration in durations">{{ duration.duration.format() }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="box">
+                <table class="table is-fullwidth is-striped">
+                    <thead>
+                        <tr>
+                            <th :colspan="vma_percentages.length + 1" style="text-align: center;">Long distances</th>
+                        </tr>
+                        <tr>
+                            <th>VMA</th>
+                            <th v-for="split in splits">{{ split.value }} %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                        </tr>
+                        <tr v-for="durations, distance in duration_based_on_vma.long">
+                            <th>{{ formatDistance(Number(distance)) }}</th>
+                            <td v-for="duration in durations">{{ duration.duration.format() }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
         <div :class="is_visible_mobile">
             <div class="box">
                 <table class="table is-fullwidth is-striped">
